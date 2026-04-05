@@ -34,7 +34,7 @@ export default function Templates() {
   useEffect(() => {
     ;(async () => {
       setLoading(true)
-      let q = supabase.from('templates').select('*').order('name')
+      const q = supabase.from('templates').select('*').order('name')
       const { data } = await q
       setList((data as TemplateRow[]) || [])
       setLoading(false)
@@ -56,7 +56,7 @@ export default function Templates() {
     return base
   }, [list, tab, filter, user, isAgency])
 
-  const useT = (t: TemplateRow) => {
+  const openWithTemplate = (t: TemplateRow) => {
     navigate('/proposals/new/smart', {
       state: {
         templateId: t.id,
@@ -118,7 +118,7 @@ export default function Templates() {
                     <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
                       {t.description}
                     </p>
-                    <Button className="w-full" onClick={() => useT(t)}>
+                    <Button className="w-full" onClick={() => openWithTemplate(t)}>
                       Use This →
                     </Button>
                   </CardContent>
@@ -168,7 +168,7 @@ export default function Templates() {
                     <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
                       {t.description}
                     </p>
-                    <Button className="w-full" onClick={() => useT(t)}>
+                    <Button className="w-full" onClick={() => openWithTemplate(t)}>
                       Use This →
                     </Button>
                   </CardContent>
@@ -198,7 +198,7 @@ export default function Templates() {
                     <CardTitle className="font-fraunces text-lg">{t.name}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Button className="w-full" onClick={() => useT(t)}>
+                    <Button className="w-full" onClick={() => openWithTemplate(t)}>
                       Use This →
                     </Button>
                   </CardContent>

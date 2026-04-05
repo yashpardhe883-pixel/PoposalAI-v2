@@ -1,35 +1,79 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import { Link } from 'react-router-dom'
+import { useAuthStore } from '@/store/authStore'
+
+function loginWithError(navigate: ReturnType<typeof useNavigate>, message: string) {
+  navigate(`/login?error=${encodeURIComponent(message)}`, { replace: true })
+}
 
 export default function AuthCallback() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    let cancelled = false
+
     ;(async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-      if (session) {
-        const { data: profile } = await supabase
+      try {
+        const params = new URLSearchParams(window.location.search)
+        const code = params.get('code')
+
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+          if (exchangeError) {
+            const {
+              data: { session: existing },
+            } = await supabase.auth.getSession()
+            if (!existing) throw exchangeError
+          }
+        }
+
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession()
+        if (sessionError) throw sessionError
+        if (!session?.user) {
+          throw new Error('No session after sign-in')
+        }
+
+        if (cancelled) return
+
+        const store = useAuthStore.getState()
+        store.setSession(session)
+        store.setUser(session.user)
+
+        const { data: existing, error: selectError } = await supabase
           .from('profiles')
           .select('id')
           .eq('id', session.user.id)
-          .single()
-        if (!profile) {
-          const meta = session.user.user_metadata as Record<string, string>
-          await supabase.from('profiles').insert({
+          .maybeSingle()
+
+        if (selectError) throw selectError
+
+        if (!existing) {
+          const meta = session.user.user_metadata as Record<string, string | undefined>
+          const { error: insertError } = await supabase.from('profiles').insert({
             id: session.user.id,
-            full_name: meta.full_name || meta.name || session.user.email?.split('@')[0],
-            logo_url: meta.avatar_url,
+            full_name: meta.full_name || meta.name || session.user.email?.split('@')[0] || 'User',
+            logo_url: meta.avatar_url ?? null,
           })
+          if (insertError) throw insertError
         }
+
+        await store.fetchProfile()
+        store.setLoading(false)
         navigate('/dashboard', { replace: true })
-      } else {
-        navigate('/login', { replace: true })
+      } catch (e) {
+        useAuthStore.getState().setLoading(false)
+        const message = e instanceof Error ? e.message : 'Sign-in failed'
+        loginWithError(navigate, message)
       }
     })()
+
+    return () => {
+      cancelled = true
+    }
   }, [navigate])
 
   return (

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { Toaster } from '@/components/ui/toaster'
 import { LoadingScreen } from '@/components/LoadingScreen'
@@ -28,6 +29,10 @@ function ProtectedRoute() {
 }
 
 export default function App() {
+  useEffect(() => {
+    void useAuthStore.getState().init()
+  }, [])
+
   return (
     <BrowserRouter>
       <Routes>

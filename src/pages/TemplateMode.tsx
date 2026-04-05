@@ -26,7 +26,7 @@ export default function TemplateMode() {
     })()
   }, [])
 
-  const useTemplate = (t: TemplateRow) => {
+  const openWithTemplate = (t: TemplateRow) => {
     navigate('/proposals/new/smart', {
       state: {
         templateId: t.id,
@@ -77,7 +77,7 @@ export default function TemplateMode() {
                 <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
                   {t.description}
                 </p>
-                <Button className="w-full" onClick={() => useTemplate(t)}>
+                <Button className="w-full" onClick={() => openWithTemplate(t)}>
                   Use This →
                 </Button>
               </CardContent>
