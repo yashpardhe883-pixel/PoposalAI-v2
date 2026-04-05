@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300;1,600&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #0a0908;
+    --bg-secondary: #111009;
+    --surface: #161410;
+    --surface2: #1e1b14;
+    --gold: #d4a843;
+    --gold-hover: #f0c96a;
+    --gold-dim: rgba(212, 168, 67, 0.15);
+    --teal: #2dd4b0;
+    --rust: #e8673a;
+    --text: #e8e0d0;
+    --text-mid: rgba(232, 224, 208, 0.7);
+    --text-muted: rgba(232, 224, 208, 0.45);
+    --border-custom: rgba(255, 255, 255, 0.07);
+    --border2: rgba(255, 255, 255, 0.12);
+
+    --background: 20 14% 6%;
+    --foreground: 40 24% 86%;
+    --card: 30 12% 9%;
+    --card-foreground: 40 24% 86%;
+    --popover: 30 12% 9%;
+    --popover-foreground: 40 24% 86%;
+    --primary: 42 64% 55%;
+    --primary-foreground: 20 14% 6%;
+    --secondary: 30 10% 14%;
+    --secondary-foreground: 40 24% 86%;
+    --muted: 30 8% 18%;
+    --muted-foreground: 40 15% 55%;
+    --accent: 42 64% 55%;
+    --accent-foreground: 20 14% 6%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 100% / 0.07;
+    --input: 0 0% 100% / 0.07;
+    --ring: 42 64% 55%;
+    --radius: 12px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-[#0a0908] text-[#e8e0d0] font-outfit antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-fraunces;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-white/10;
+}
