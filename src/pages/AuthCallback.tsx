@@ -17,22 +17,24 @@ export default function AuthCallback() {
       try {
         const params = new URLSearchParams(window.location.search)
         const code = params.get('code')
+        const error = params.get('error')
+        const error_description = params.get('error_description')
 
-        if (code) {
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
-          if (exchangeError) {
-            const {
-              data: { session: existing },
-            } = await supabase.auth.getSession()
-            if (!existing) throw exchangeError
-          }
+        if (error) {
+          throw new Error(error_description || error)
         }
 
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession()
-        if (sessionError) throw sessionError
+        // Wait a bit for Supabase auto-exchange if code is present
+        let session = null
+        for (let i = 0; i < 20; ++i) {
+          const { data } = await supabase.auth.getSession()
+          if (data.session?.user) {
+            session = data.session
+            break
+          }
+          await new Promise((r) => setTimeout(r, 100))
+        }
+
         if (!session?.user) {
           throw new Error('No session after sign-in')
         }

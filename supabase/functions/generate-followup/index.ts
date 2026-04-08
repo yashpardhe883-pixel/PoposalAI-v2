@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { section, currentContent, context } = await req.json()
+    const { proposal, userProfile, daysSinceSent } = await req.json()
     const apiKey = Deno.env.get('GEMINI_API_KEY')
     if (!apiKey) throw new Error('GEMINI_API_KEY is missing')
 
@@ -20,15 +20,17 @@ serve(async (req) => {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' })
 
     const prompt = `
-You are an expert copywriter. 
-Please improve the following section of a proposal: "${section}"
-Context: ${JSON.stringify(context)}
-Current Content: ${currentContent}
+You are an expert sales strategist.
+Write a professional follow-up email for this proposal that was sent ${daysSinceSent} days ago.
+Proposal Title: ${proposal.title}
+Client: ${proposal.client_name}
+Sender: ${userProfile.full_name} (${userProfile.company_name})
 
 RESPOND EXCLUSIVELY IN VALID JSON FORMAT. Do not use markdown blocks.
 Structure:
 {
-  "improvedContent": "..."
+  "subject": "Checking in: [Topic]",
+  "body": "..."
 }
 `
 

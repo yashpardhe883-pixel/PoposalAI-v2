@@ -12,35 +12,58 @@ serve(async (req) => {
   }
 
   try {
-    const { section, currentContent, context } = await req.json()
-    const apiKey = Deno.env.get('GEMINI_API_KEY')
-    if (!apiKey) throw new Error('GEMINI_API_KEY is missing')
+    const { formData, userProfile } = await req.json()
 
+    // Initialize Gemini
+    const apiKey = Deno.env.get('GEMINI_API_KEY')
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY is missing')
+    }
     const genAI = new GoogleGenerativeAI(apiKey)
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' })
 
     const prompt = `
-You are an expert copywriter. 
-Please improve the following section of a proposal: "${section}"
-Context: ${JSON.stringify(context)}
-Current Content: ${currentContent}
+You are an expert proposal builder. Create a professional proposal.
+Client Name: ${formData.client_name}
+Project Type: ${formData.project_type}
+Project Description: ${formData.project_description}
+Budget: ${formData.budget}
+Deadline: ${formData.deadline}
+Tone: ${formData.tone}
+Currency: ${formData.currency}
 
-RESPOND EXCLUSIVELY IN VALID JSON FORMAT. Do not use markdown blocks.
-Structure:
+Sender Profile:
+Company Name: ${userProfile.company_name}
+Full Name: ${userProfile.full_name}
+
+RESPOND EXCLUSIVELY IN VALID JSON FORMAT. Do not use markdown blocks like \`\`\`json.
+The structure must be:
 {
-  "improvedContent": "..."
+  "title": "Proposal for [Client Name] - [Project Type]",
+  "executive_summary": "...",
+  "solution": "...",
+  "deliverables": [
+    { "title": "...", "description": "..." }
+  ],
+  "investment": "...",
+  "timeline": "...",
+  "score": 85,
+  "score_feedback": ["good point 1", "improvement 1"]
 }
 `
 
     const result = await model.generateContent(prompt)
     const responseText = result.response.text()
     
+    // Parse JSON
     let parsedData
     try {
+      // Remove any markdown formatting if present
       const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim()
       parsedData = JSON.parse(cleanJson)
     } catch (err) {
-      throw new Error('Failed to parse Gemini output.')
+      console.error('Failed to parse Gemini output:', responseText)
+      throw new Error('Failed to generate proposal: Invalid format from AI')
     }
 
     return new Response(JSON.stringify({ success: true, data: parsedData }), {
