@@ -1,21 +1,25 @@
 import { create } from 'zustand'
 import { supabase } from '@/lib/supabase'
+import type { Session, User } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+
+type Profile = Database['public']['Tables']['profiles']['Row']
 
 interface AuthState {
-  user: any
-  profile: any
+  user: User | null
+  profile: Profile | null
   loading: boolean
-  setUser: (user: any) => void
-  setProfile: (profile: any) => void
+  setUser: (user: User | null) => void
+  setProfile: (profile: Profile | null) => void
   setLoading: (loading: boolean) => void
   initialize: () => void
   logout: () => Promise<void>
   // aliases so other files dont break
   init: () => void
   signOut: () => Promise<void>
-  fetchProfile: (id: string) => Promise<void>
-  setSession: (session: any) => void
-  session: any
+  fetchProfile: (id?: string) => Promise<void>
+  setSession: (session: Session | null) => void
+  session: Session | null
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -29,13 +33,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setLoading: (loading) => set({ loading }),
   setSession: (session) => set({ session, user: session?.user || null }),
 
-  fetchProfile: async (id: string) => {
+  fetchProfile: async (id?: string) => {
+    const userId = id ?? get().user?.id
+    if (!userId) {
+      set({ profile: null })
+      return
+    }
+
     const { data } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', id)
+      .eq('id', userId)
       .single()
-    set({ profile: data })
+    set({ profile: (data ?? null) as Profile | null })
   },
 
   initialize: () => {

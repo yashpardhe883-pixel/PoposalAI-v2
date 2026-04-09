@@ -61,7 +61,7 @@ The structure must be:
       // Remove any markdown formatting if present
       const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim()
       parsedData = JSON.parse(cleanJson)
-    } catch (err) {
+    } catch {
       console.error('Failed to parse Gemini output:', responseText)
       throw new Error('Failed to generate proposal: Invalid format from AI')
     }

@@ -24,9 +24,16 @@ export default function AuthCallback() {
           throw new Error(error_description || error)
         }
 
-        // Wait a bit for Supabase auto-exchange if code is present
         let session = null
+        if (code) {
+          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+          if (exchangeError) throw exchangeError
+          session = data.session
+        }
+
+        // Wait a bit for Supabase auto-exchange if code is present
         for (let i = 0; i < 20; ++i) {
+          if (session?.user) break
           const { data } = await supabase.auth.getSession()
           if (data.session?.user) {
             session = data.session
@@ -43,7 +50,6 @@ export default function AuthCallback() {
 
         const store = useAuthStore.getState()
         store.setSession(session)
-        store.setUser(session.user)
 
         const { data: existing, error: selectError } = await supabase
           .from('profiles')
@@ -63,7 +69,7 @@ export default function AuthCallback() {
           if (insertError) throw insertError
         }
 
-        await store.fetchProfile()
+        await store.fetchProfile(session.user.id)
         store.setLoading(false)
         navigate('/dashboard', { replace: true })
       } catch (e) {
