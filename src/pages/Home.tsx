@@ -13,7 +13,7 @@ const testimonials = [
   {
     quote: 'ProposalAI turned our vague briefs into signed SOWs in one afternoon.',
     name: 'Maya Chen',
-    role: 'Independent Designer',
+    role: 'Designer',
   },
   {
     quote: 'Win rate up, follow-ups down — the score feedback is eerily accurate.',
@@ -38,12 +38,12 @@ const testimonials = [
 ]
 
 const faqs = [
-  { q: 'Is Gemini really free?', a: 'Yes — generous free quotas via Google AI Studio.' },
-  { q: 'Can clients sign without an account?', a: 'Yes — share links work anonymously.' },
-  { q: 'Do you store my prompts?', a: 'Stored in your Supabase project under your control.' },
+  { q: 'What does this tool actually do?', a: 'It generates high-converting proposals tailored to your client, helping you stand out and close deals faster.' },
+  { q: 'Can I customize the output to my needs?', a: 'Yes. You can adjust tone, structure, and key points to match your style and the client’s requirements.' },
+  { q: 'Will this actually help me get more clients or sales?', a: 'It improves your chances by making your proposals more relevant and persuasive—but results still depend on your offer and execution..' },
   { q: 'Can I white-label?', a: 'Agency plan supports white-label PDF exports.' },
-  { q: 'What about GDPR?', a: 'You control data residency via your Supabase region.' },
-  { q: 'How does billing work?', a: 'Stripe subscriptions with a self-serve customer portal.' },
+  { q: 'What happens if I don’t like the results?', a: 'You can regenerate, edit, or refine the output instantly until it fits your needs.' },
+  { q: 'Can I cancel anytime?', a: 'Yes. You can cancel your subscription anytime with no long-term commitment.' },
 ]
 
 export default function Home() {
@@ -89,7 +89,7 @@ export default function Home() {
             <span className="italic text-[#d4a843]">actually</span> win
           </h1>
           <p className="mt-6 text-lg text-[rgba(232,224,208,0.7)] max-w-2xl mx-auto reveal">
-            Describe your project. Gemini AI writes a complete, client-ready
+            Describe your project. We will create a complete, client-ready
             proposal in seconds.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center reveal">
@@ -112,7 +112,7 @@ export default function Home() {
               ))}
             </div>
             <p className="text-sm text-muted-foreground">
-              12,847 freelancers joined
+              1,200+ freelancers joined
             </p>
           </div>
         </div>
@@ -150,10 +150,10 @@ export default function Home() {
       <section className="border-y border-white/10 bg-[#111009] py-12 reveal">
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
           {[
-            ['2.4M+', 'Proposals'],
+            ['2.4k+', 'Proposals'],
             ['68%', 'Win rate lift'],
             ['3 min', 'Time to proposal'],
-            ['$840M', 'Won on platform'],
+            ['$840k+', 'Won on platform'],
           ].map(([a, b]) => (
             <div key={b}>
               <p className="font-fraunces text-3xl text-[#d4a843]">{a}</p>
@@ -210,10 +210,10 @@ export default function Home() {
           Bento grid of capabilities — from AI drafting to signatures.
         </p>
         <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 reveal">
-        <div
-          className="grid grid-cols-12 gap-4 auto-rows-[minmax(140px,auto)] min-w-[720px] md:min-w-0"
-          style={{
-            gridTemplateAreas: `
+          <div
+            className="grid grid-cols-12 gap-4 auto-rows-[minmax(140px,auto)] min-w-[720px] md:min-w-0"
+            style={{
+              gridTemplateAreas: `
               "a a a a a b b b b b b b"
               "a a a a a b b b b b b b"
               "c c c c d d d d e e e e"
@@ -221,119 +221,119 @@ export default function Home() {
               "f f f f f f g g h h h h"
               "f f f f f f g g h h h h"
             `,
-          }}
-        >
-          <BentoCard area="a" title="Smart AI Generation" badge="Free+">
-            <p className="text-xs text-muted-foreground mb-3">
-              Powered by Google Gemini
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {['Professional', 'Friendly', 'Bold', 'Creative'].map((t) => (
-                <span
-                  key={t}
-                  className={cn(
-                    'text-xs font-mono px-2 py-1 rounded-pill border',
-                    t === 'Professional'
-                      ? 'border-[#d4a843] bg-[#d4a843]/15 text-[#f0c96a]'
-                      : 'border-white/10 text-muted-foreground'
-                  )}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </BentoCard>
-          <BentoCard area="b" title="Real-Time Open Tracking" badge="Pro">
-            <ul className="space-y-2 text-xs">
-              <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#2dd4b0]" /> Viewing now
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#d4a843]" /> Opened 3×
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#e8673a]" /> Not opened
-              </li>
-            </ul>
-          </BentoCard>
-          <BentoCard area="c" title="Proposal Score" badge="Pro">
-            <div className="flex items-center gap-4">
-              <svg width="72" height="72" className="-rotate-90">
-                <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
-                <circle cx="36" cy="36" r="30" fill="none" stroke="#d4a843" strokeWidth="8" strokeDasharray="188" strokeDashoffset="17" strokeLinecap="round" />
-              </svg>
-              <div className="text-sm space-y-1">
-                <p className="text-[#2dd4b0]">★ Clear scope</p>
-                <p className="text-[#d4a843]">⚠ Add case study</p>
+            }}
+          >
+            <BentoCard area="a" title="Smart AI Generation" badge="Free+">
+              <p className="text-xs text-muted-foreground mb-3">
+                Powered by Google Gemini
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {['Professional', 'Friendly', 'Bold', 'Creative'].map((t) => (
+                  <span
+                    key={t}
+                    className={cn(
+                      'text-xs font-mono px-2 py-1 rounded-pill border',
+                      t === 'Professional'
+                        ? 'border-[#d4a843] bg-[#d4a843]/15 text-[#f0c96a]'
+                        : 'border-white/10 text-muted-foreground'
+                    )}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </BentoCard>
+            <BentoCard area="b" title="Real-Time Open Tracking" badge="Pro">
+              <ul className="space-y-2 text-xs">
+                <li className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#2dd4b0]" /> Viewing now
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#d4a843]" /> Opened 3×
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#e8673a]" /> Not opened
+                </li>
+              </ul>
+            </BentoCard>
+            <BentoCard area="c" title="Proposal Score" badge="Pro">
+              <div className="flex items-center gap-4">
+                <svg width="72" height="72" className="-rotate-90">
+                  <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
+                  <circle cx="36" cy="36" r="30" fill="none" stroke="#d4a843" strokeWidth="8" strokeDasharray="188" strokeDashoffset="17" strokeLinecap="round" />
+                </svg>
+                <div className="text-sm space-y-1">
+                  <p className="text-[#2dd4b0]">★ Clear scope</p>
+                  <p className="text-[#d4a843]">⚠ Add case study</p>
+                </div>
+              </div>
+            </BentoCard>
+            <BentoCard area="d" title="E-Signature" badge="Pro">
+              <div className="border border-dashed border-white/20 rounded-md py-6 text-center font-fraunces italic text-lg text-black/70 bg-[#faf8f4]/10">
+                Alex Morgan
+              </div>
+              <p className="text-xs text-[#2dd4b0] mt-2">✓ Legally binding</p>
+            </BentoCard>
+            <BentoCard area="e" title="AI Follow-Up Emails" badge="Pro">
+              <Mail className="h-8 w-8 text-[#d4a843] mb-2" />
+              <p className="text-xs text-muted-foreground">
+                Warm nudges generated from proposal context — never spammy.
+              </p>
+            </BentoCard>
+            <BentoCard area="f" title="Analytics" badge="Pro">
+              <div className="flex items-end gap-1 h-20">
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      'flex-1 rounded-t bg-white/10',
+                      [2, 5, 7].includes(i) && 'bg-[#d4a843]'
+                    )}
+                    style={{ height: `${30 + (i * 7) % 100}%` }}
+                  />
+                ))}
+              </div>
+              <p className="text-xs mt-2 font-mono">
+                Win Rate <span className="text-[#d4a843]">72%</span> · MRR Won{' '}
+                <span className="text-[#2dd4b0]">$18,400</span>
+              </p>
+            </BentoCard>
+            <BentoCard area="g" title="Team Collaboration" badge="Agency">
+              <div className="flex gap-2">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="h-10 w-10 rounded-full bg-white/10 relative"
+                  >
+                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#2dd4b0] border border-[#111009]" />
+                  </span>
+                ))}
+              </div>
+            </BentoCard>
+            <BentoCard area="h" title="White-Label Mode" badge="Agency">
+              <Palette className="h-6 w-6 text-[#d4a843]" />
+            </BentoCard>
+            <div
+              className="col-span-12 rounded-lg border border-white/10 bg-[#161410] p-6 flex flex-col justify-center reveal"
+              style={{ gridColumn: 'span 6' }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Plug className="h-6 w-6 text-[#d4a843]" />
+                <h3 className="font-fraunces text-lg">CRM Integration</h3>
+                <Badge variant="secondary">Agency</Badge>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {['HubSpot', 'Notion', 'Trello'].map((x) => (
+                  <span
+                    key={x}
+                    className="text-xs font-mono px-3 py-1 rounded-pill border border-white/10"
+                  >
+                    {x}
+                  </span>
+                ))}
               </div>
             </div>
-          </BentoCard>
-          <BentoCard area="d" title="E-Signature" badge="Pro">
-            <div className="border border-dashed border-white/20 rounded-md py-6 text-center font-fraunces italic text-lg text-black/70 bg-[#faf8f4]/10">
-              Alex Morgan
-            </div>
-            <p className="text-xs text-[#2dd4b0] mt-2">✓ Legally binding</p>
-          </BentoCard>
-          <BentoCard area="e" title="AI Follow-Up Emails" badge="Pro">
-            <Mail className="h-8 w-8 text-[#d4a843] mb-2" />
-            <p className="text-xs text-muted-foreground">
-              Warm nudges generated from proposal context — never spammy.
-            </p>
-          </BentoCard>
-          <BentoCard area="f" title="Analytics" badge="Pro">
-            <div className="flex items-end gap-1 h-20">
-              {Array.from({ length: 9 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    'flex-1 rounded-t bg-white/10',
-                    [2, 5, 7].includes(i) && 'bg-[#d4a843]'
-                  )}
-                  style={{ height: `${30 + (i * 7) % 100}%` }}
-                />
-              ))}
-            </div>
-            <p className="text-xs mt-2 font-mono">
-              Win Rate <span className="text-[#d4a843]">72%</span> · MRR Won{' '}
-              <span className="text-[#2dd4b0]">$18,400</span>
-            </p>
-          </BentoCard>
-          <BentoCard area="g" title="Team Collaboration" badge="Agency">
-            <div className="flex gap-2">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <span
-                  key={i}
-                  className="h-10 w-10 rounded-full bg-white/10 relative"
-                >
-                  <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#2dd4b0] border border-[#111009]" />
-                </span>
-              ))}
-            </div>
-          </BentoCard>
-          <BentoCard area="h" title="White-Label Mode" badge="Agency">
-            <Palette className="h-6 w-6 text-[#d4a843]" />
-          </BentoCard>
-          <div
-            className="col-span-12 rounded-lg border border-white/10 bg-[#161410] p-6 flex flex-col justify-center reveal"
-            style={{ gridColumn: 'span 6' }}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Plug className="h-6 w-6 text-[#d4a843]" />
-              <h3 className="font-fraunces text-lg">CRM Integration</h3>
-              <Badge variant="secondary">Agency</Badge>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {['HubSpot', 'Notion', 'Trello'].map((x) => (
-                <span
-                  key={x}
-                  className="text-xs font-mono px-3 py-1 rounded-pill border border-white/10"
-                >
-                  {x}
-                </span>
-              ))}
-            </div>
           </div>
-        </div>
         </div>
       </section>
 
