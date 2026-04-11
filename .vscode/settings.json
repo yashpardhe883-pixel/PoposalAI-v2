@@ -1,0 +1,10 @@
+{
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+  "tailwindCSS.emmetCompletions": true,
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
+  "deno.unstable": true
+}
