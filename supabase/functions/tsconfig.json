@@ -1,10 +1,12 @@
 {
-    "compilerOptions": {
-        "lib": [
-            "ES2020"
-        ],
-        "types": [
-            "deno-types"
-        ]
-    }
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "moduleResolution": "node",
+    "strict": false
+  },
+  "include": [
+    "**/*.ts"
+  ]
 }
