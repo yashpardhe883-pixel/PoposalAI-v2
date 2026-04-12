@@ -2,8 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 serve(async (req) => {
@@ -12,128 +12,130 @@ serve(async (req) => {
   }
 
   try {
-    const body = await req.json();
-    const { formData, userProfile } = body;
-
     const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 
+    console.log("Function started");
+    console.log("GEMINI_API_KEY exists:", !!GEMINI_API_KEY);
+
     if (!GEMINI_API_KEY) {
+      console.log("ERROR: No Gemini API key");
       return new Response(
-        JSON.stringify({ success: false, error: "GEMINI_API_KEY not set" }),
+        JSON.stringify({ success: false, error: "GEMINI_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const prompt = `You are an expert business proposal writer. Write a complete professional proposal.
+    const body = await req.json();
+    console.log("Body received:", JSON.stringify(body).slice(0, 100));
 
-Return ONLY a valid JSON object. No markdown, no backticks, no extra text.
+    const { formData, userProfile } = body;
 
-Details:
-- Company: ${userProfile?.company_name || userProfile?.full_name || "Our Company"}
-- Client: ${formData?.client_name || "Client"}
-- Project Type: ${formData?.project_type || "General Project"}
-- Description: ${formData?.project_description || "Project description"}
-- Budget: ${formData?.budget || "To be discussed"}
-- Deadline: ${formData?.deadline || "To be discussed"}
-- Tone: ${formData?.tone || "professional"}
-- Currency: ${formData?.currency || "USD"}
+    const prompt = `You are a professional proposal writer. Write a business proposal and return ONLY a JSON object with no markdown formatting.
 
-Return this exact JSON:
+Client: ${formData?.client_name || "Client"}
+Project: ${formData?.project_type || "Project"}
+Description: ${formData?.project_description || "Description"}
+Budget: ${formData?.budget || "TBD"}
+Deadline: ${formData?.deadline || "TBD"}
+Tone: ${formData?.tone || "professional"}
+Currency: ${formData?.currency || "USD"}
+Company: ${userProfile?.company_name || userProfile?.full_name || "Our Company"}
+
+Return this JSON structure:
 {
   "title": "Proposal for ${formData?.client_name} - ${formData?.project_type}",
-  "executive_summary": "Write 3-4 compelling sentences about this project",
-  "understanding": "Write 2-3 paragraphs showing understanding of client needs",
-  "scope": ["Deliverable 1", "Deliverable 2", "Deliverable 3", "Deliverable 4", "Deliverable 5"],
-  "exclusions": ["Not included item 1", "Not included item 2"],
+  "executive_summary": "3-4 sentences about this project",
+  "understanding": "2 paragraphs showing understanding of client needs",
+  "scope": ["Deliverable 1", "Deliverable 2", "Deliverable 3", "Deliverable 4"],
+  "exclusions": ["Not included 1", "Not included 2"],
   "timeline": [
-    {"phase": "Phase 1: Discovery", "duration": "Week 1", "description": "Initial planning and research"},
-    {"phase": "Phase 2: Development", "duration": "Weeks 2-4", "description": "Main work delivery"},
-    {"phase": "Phase 3: Review", "duration": "Week 5", "description": "Client review and revisions"},
-    {"phase": "Phase 4: Launch", "duration": "Week 6", "description": "Final delivery and handover"}
+    {"phase": "Phase 1: Discovery", "duration": "Week 1", "description": "Planning and research"},
+    {"phase": "Phase 2: Execution", "duration": "Weeks 2-4", "description": "Main delivery"},
+    {"phase": "Phase 3: Review", "duration": "Week 5", "description": "Revisions"},
+    {"phase": "Phase 4: Launch", "duration": "Week 6", "description": "Final handover"}
   ],
   "pricing": [
-    {"item": "Main Service", "description": "Core deliverable", "amount": "${formData?.currency || "USD"} ${formData?.budget || "TBD"}"},
-    {"item": "Additional Support", "description": "Post-delivery support", "amount": "Included"}
+    {"item": "Main Service", "description": "Core work", "amount": "${formData?.budget || "TBD"}"},
+    {"item": "Support", "description": "Post-delivery", "amount": "Included"}
   ],
-  "total": "${formData?.budget || "To be discussed"}",
-  "payment_terms": "50% upfront, 50% on final delivery",
-  "why_us": "Write 2 paragraphs explaining why we are the best choice",
+  "total": "${formData?.budget || "TBD"}",
+  "payment_terms": "50% upfront, 50% on completion",
+  "why_us": "2 paragraphs on why we are the right choice",
   "terms": [
-    "Revisions: 3 rounds included",
-    "Payment due within 14 days of invoice",
-    "Full IP rights transfer upon final payment",
-    "Confidentiality maintained throughout"
+    "3 rounds of revisions included",
+    "Payment due within 14 days",
+    "Full IP rights on final payment",
+    "Confidentiality maintained"
   ],
-  "next_steps": "Please review this proposal and sign to confirm your agreement so we can begin immediately.",
+  "next_steps": "Sign this proposal to get started immediately.",
   "score": 85,
   "score_feedback": [
-    {"type": "strength", "message": "Clear project scope defined"},
-    {"type": "strength", "message": "Transparent pricing structure"},
-    {"type": "warning", "message": "Consider adding more specific milestones"},
-    {"type": "warning", "message": "Add client testimonials to strengthen credibility"}
+    {"type": "strength", "message": "Clear scope defined"},
+    {"type": "strength", "message": "Transparent pricing"},
+    {"type": "warning", "message": "Add specific milestones"},
+    {"type": "warning", "message": "Include client testimonials"}
   ]
 }`;
 
-    // Call Gemini API directly using fetch
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+    console.log("Calling Gemini API...");
+
+    const geminiRes = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}',
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 4000,
-          },
+          generationConfig: { temperature: 0.7, maxOutputTokens: 3000 },
         }),
       }
     );
 
-    if (!geminiResponse.ok) {
-      const errText = await geminiResponse.text();
+    console.log("Gemini response status:", geminiRes.status);
+
+    if (!geminiRes.ok) {
+      const errText = await geminiRes.text();
+      console.log("Gemini error:", errText);
       return new Response(
-        JSON.stringify({ success: false, error: `Gemini API error: ${errText}` }),
+        JSON.stringify({ success: false, error: `Gemini error: ${geminiRes.status}` }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const geminiData = await geminiResponse.json();
-    let responseText =
-      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const geminiData = await geminiRes.json();
+    console.log("Gemini data received");
 
-    // Clean response
-    responseText = responseText
-      .replace(/```json\n?/gi, "")
-      .replace(/```\n?/gi, "")
-      .trim();
+    let text = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    console.log("Raw text length:", text.length);
 
-    let proposalData;
+    text = text.replace(/```json\n?/gi, "").replace(/```\n?/gi, "").trim();
+
+    let proposal;
     try {
-      proposalData = JSON.parse(responseText);
+      proposal = JSON.parse(text);
     } catch {
-      const match = responseText.match(/\{[\s\S]*\}/);
+      const match = text.match(/\{[\s\S]*\}/);
       if (match) {
-        proposalData = JSON.parse(match[0]);
+        proposal = JSON.parse(match[0]);
       } else {
+        console.log("JSON parse failed, text:", text.slice(0, 200));
         return new Response(
-          JSON.stringify({
-            success: false,
-            error: "Failed to parse AI response. Please try again.",
-          }),
+          JSON.stringify({ success: false, error: "Could not parse AI response" }),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
     }
 
+    console.log("Success! Returning proposal");
     return new Response(
-      JSON.stringify({ success: true, data: proposalData }),
+      JSON.stringify({ success: true, data: proposal }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
-  } catch (error) {
+  } catch (err) {
+    console.log("Caught error:", err?.message);
     return new Response(
-      JSON.stringify({ success: false, error: error?.message || "Unknown error" }),
+      JSON.stringify({ success: false, error: err?.message || "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
